@@ -5,7 +5,6 @@ using namespace std;
 // A Hash table is an array of items, which themselves are a {key: value} pair.
 // Hash-Item
 class hashTableItem {
-    
 public:
     string key;
     string value;
@@ -146,6 +145,8 @@ void printTable(hashTable* table) {
     }
     cout << "-------------------\n\n";
 }
+
+
 
 int main() {
   int hash = hashFunction("mayhul");

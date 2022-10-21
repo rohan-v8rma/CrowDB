@@ -19,8 +19,12 @@ So, on average, the `time complexity is a constant O(1)` access time. This is ca
 ## Deep-Dive
 
 ### Choose a hash function
+### 
+
 
 # TODO
+
+## Constructor Format
 
 Node(string s):data(s),next(NULL) {};
         Node(string s,Node* nd):data(s),next(nd) {};

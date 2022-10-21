@@ -125,6 +125,28 @@ string hashSearch(hashTable* table, string key) {
     return NULL;
 }
 
+// yeh printing
+void printSearch(hashTable* table, string key) {
+    string val = hashSearch(table, key);
+    if (val == "") {
+        cout << "Key:"<< key <<" does not exist" << endl;
+        return;
+    }
+    else {
+        cout << "Key:"<< key <<", Value:" << val << endl;
+    }
+}
+
+void printTable(hashTable* table) {
+    cout << "\nHASH TABLE\n----------" << endl;
+    for (int i=0; i<table->size; i++) {
+        if (table->items[i]) {
+            cout << "Index:" << i << ", Key:" << table->items[i]->key << ", Value:" << table->items[i]->value << endl;
+        }
+    }
+    cout << "-------------------\n\n";
+}
+
 int main() {
   int hash = hashFunction("mayhul");
   
