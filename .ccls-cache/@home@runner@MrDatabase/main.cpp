@@ -108,8 +108,25 @@ void hashTableInsert(hashTable* table, string key, string value) {
     }
 }
 
+// hash-search
+
+string hashSearch(hashTable* table, string key) {
+    // Searches the key in the hashtable
+    // and returns NULL if it doesn't exist
+    int index = hashFunction(key);
+    hashTableItem* item = table->items[index];
+
+    // Ensure that we move to a non NULL item
+    if (item != NULL) {
+        if (item->key == key) {
+            return item->value;
+        }
+    }
+    return NULL;
+}
+
 int main() {
   int hash = hashFunction("mayhul");
-
+  
   cout << hash;
 }
