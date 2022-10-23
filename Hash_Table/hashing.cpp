@@ -119,14 +119,22 @@ string hashSearch(hashTable* table, string key) {
     // and returns NULL if it doesn't exist
     int index = hashFunction(key);
     hashTableItem* item = table->items[index];
+    linkedList<hashTableItem>* overflowLinkedList = table->overflowLinkedLists[index];
 
     // Ensure that we move to a non NULL item
-    if (item != NULL) {
-        if (item->key == key) {
+    while(item != NULL) {
+        if (item->key == key) { // Returning the value only if it matches.
             return item->value;
         }
+
+        // Changing item to the items present in the overflowLinkedList of the corresponding index hash value
+        if(overflowLinkedList != NULL) {
+            item = overflowLinkedList->item;
+            overflowLinkedList = overflowLinkedList->next;
+        }
+        
     }
-    return NULL;
+    return "No corresponding value for this key.";
 }
 
 // yeh printing
@@ -175,6 +183,9 @@ int main() {
     hashTableInsert(tablePointer, "rohan", "batman");
 
     printTable(tablePointer);
+
+
+    cout << hashSearch(tablePointer, "rohan") << endl;
 
     return 0;
 }
