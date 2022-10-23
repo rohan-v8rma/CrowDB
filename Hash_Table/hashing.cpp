@@ -1,4 +1,6 @@
 #include <iostream>
+#include "../user-defined-header-files/linked-list.h"
+
 using namespace std;
 #define CAPACITY 10 // Size of the Hash Table
 
@@ -28,42 +30,12 @@ ostream& operator << (ostream& out, hashTableItem* item) {
     return out;
 }
 
-class linkedList {
-public:
-    hashTableItem* item=NULL; 
-    linkedList* next=NULL;
-
-    linkedList() {
-
-    }
-
-    linkedList(hashTableItem* item) {
-        this->item = item;
-    }
-
-    void insert(hashTableItem* item) {
-        if(this->item == NULL) {
-            this->item = item;
-            return;
-        }
-
-        linkedList* tempPtr = this;
-        
-        while(tempPtr->next != NULL) {
-            tempPtr = tempPtr->next;
-        }
-
-        tempPtr->next = new linkedList(item);
-    }
-};
-
-
 // Hash-Table
 class hashTable {
     
 public:
     hashTableItem** items;
-    linkedList** overflowLinkedLists;
+    linkedList<hashTableItem>** overflowLinkedLists;
     int hashLimit = 10; // Available hash values are 0 to 9. The maximum amount of maps the hash table can contain is 10 in this case, but it is possible that two keys have the same hash value and hash value is unoccupied.
     int count = 0;
 
@@ -71,14 +43,14 @@ public:
     hashTable() {
         this->items = new hashTableItem*[hashLimit];
         // All elements of the items array, which contains pointers, are by-default NULL.
-        this->overflowLinkedLists = new linkedList*[hashLimit];
+        this->overflowLinkedLists = new linkedList<hashTableItem>*[hashLimit];
     }
 
     hashTable(int hashLimit) {
         this->hashLimit = hashLimit;
         this->items = new hashTableItem*[hashLimit];
         // All elements of the items array created above, which contains pointers, are by-default NULL. We need to allocate memory for each of them separately.
-        this->overflowLinkedLists = new linkedList*[hashLimit];
+        this->overflowLinkedLists = new linkedList<hashTableItem>*[hashLimit];
     }   
   
 };
@@ -93,10 +65,10 @@ int hashFunction(string name){
 }
 
 void handleCollision(hashTable* table, unsigned long index, hashTableItem* item) { // `index` is the corresponding index position of the hash.
-    linkedList* head = table->overflowLinkedLists[index];
+    linkedList<hashTableItem>* head = table->overflowLinkedLists[index];
 
     if (head == NULL) { // Since overflow hasn't occured as of yet, we need to allocate memory for the overflow linked list.
-        head = new linkedList;
+        head = new linkedList<hashTableItem>;
     }
 
     head->insert(item); // Takes care of both cases. When linked-list is empty as well as when it has some elements.
@@ -178,7 +150,7 @@ void printTable(hashTable* table) {
             cout << "Index:" << index << ", " << table->items[index] << endl;
         }
         
-        linkedList* overflowLinkedList = table->overflowLinkedLists[index];
+        linkedList<hashTableItem>* overflowLinkedList = table->overflowLinkedLists[index];
         while (overflowLinkedList) {
             cout << "Index:" << index << ", " << overflowLinkedList->item << endl;
 
