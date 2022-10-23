@@ -92,8 +92,17 @@ int hashFunction(string name){
   return hash % CAPACITY; 
 }
 
-void handleCollision(hashTable* table, unsigned long index, hashTableItem* item) {}
+void handleCollision(hashTable* table, unsigned long index, hashTableItem* item) { // `index` is the corresponding index position of the hash.
+    linkedList* head = table->overflowLinkedLists[index];
 
+    if (head == NULL) { // Since overflow hasn't occured as of yet, we need to allocate memory for the overflow linked list.
+        head = new linkedList;
+    }
+
+    head->insert(item); // Takes care of both cases. When linked-list is empty as well as when it has some elements.
+
+    table->overflowLinkedLists[index] = head;
+}
 
 void hashTableInsert(hashTable* table, string key, string value) {
     // Create the item
@@ -161,7 +170,7 @@ void printSearch(hashTable* table, string key) {
 }
 
 void printTable(hashTable* table) {
-    cout << "\nHASH TABLE\n----------" << endl;
+    cout << "\nHASH TABLE\n\n-------------------" << endl;
     
     for (int index = 0; index < table->hashLimit; index++) {
         
@@ -180,15 +189,20 @@ void printTable(hashTable* table) {
 }
 
 int main() {
-    int hashVal = hashFunction("mayhul");
+    // int hashVal = hashFunction("mayhul");
 
-    cout << hashVal << endl;
+    // cout << hashVal << endl;
 
-    hashVal = hashFunction("rohan");
+    // hashVal = hashFunction("rohan");
 
-    cout << hashVal << endl;
+    // cout << hashVal << endl;
 
-    
+    hashTable* tablePointer = new hashTable(CAPACITY);
+
+    hashTableInsert(tablePointer, "mayhul", "buri-buri"); // Name followed by nick name
+    hashTableInsert(tablePointer, "rohan", "batman");
+
+    printTable(tablePointer);
 
     return 0;
 }
