@@ -22,7 +22,7 @@ public:
     }
 };
 
-
+// Overloaded the stream insertion operator for easily printing `hashTableItem` instance variables
 ostream& operator << (ostream& out, hashTableItem* item) {
     out << "Key: " << item->key << ", Value: " << item->value;
     return out;
