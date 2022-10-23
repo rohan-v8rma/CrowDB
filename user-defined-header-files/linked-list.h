@@ -1,15 +1,15 @@
 
 template <class T>
-class linkedList {
+class linkedListNode {
 public:
     T* item = NULL; 
-    linkedList* next = NULL;
+    linkedListNode* next = NULL;
 
-    linkedList() {
+    linkedListNode() {
 
     }
 
-    linkedList(T* item) {
+    linkedListNode(T* item) {
         this->item = item;
     }
 
@@ -19,12 +19,12 @@ public:
             return;
         }
 
-        linkedList* tempPtr = this;
+        linkedListNode* tempPtr = this;
         
         while(tempPtr->next != NULL) {
             tempPtr = tempPtr->next;
         }
 
-        tempPtr->next = new linkedList(item);
+        tempPtr->next = new linkedListNode(item);
     }
 };

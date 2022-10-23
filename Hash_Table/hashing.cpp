@@ -35,7 +35,7 @@ class hashTable {
     
 public:
     hashTableItem** items;
-    linkedList<hashTableItem>** overflowLinkedLists;
+    linkedListNode<hashTableItem>** overflowLinkedLists;
     int hashLimit = 10; // Available hash values are 0 to 9. The maximum amount of maps the hash table can contain is 10 in this case, but it is possible that two keys have the same hash value and hash value is unoccupied.
     int count = 0;
 
@@ -43,14 +43,14 @@ public:
     hashTable() {
         this->items = new hashTableItem*[hashLimit];
         // All elements of the items array, which contains pointers, are by-default NULL.
-        this->overflowLinkedLists = new linkedList<hashTableItem>*[hashLimit];
+        this->overflowLinkedLists = new linkedListNode<hashTableItem>*[hashLimit];
     }
 
     hashTable(int hashLimit) {
         this->hashLimit = hashLimit;
         this->items = new hashTableItem*[hashLimit];
         // All elements of the items array created above, which contains pointers, are by-default NULL. We need to allocate memory for each of them separately.
-        this->overflowLinkedLists = new linkedList<hashTableItem>*[hashLimit];
+        this->overflowLinkedLists = new linkedListNode<hashTableItem>*[hashLimit];
     }   
   
 };
@@ -65,10 +65,10 @@ int hashFunction(string name){
 }
 
 void handleCollision(hashTable* table, unsigned long index, hashTableItem* item) { // `index` is the corresponding index position of the hash.
-    linkedList<hashTableItem>* head = table->overflowLinkedLists[index];
+    linkedListNode<hashTableItem>* head = table->overflowLinkedLists[index];
 
     if (head == NULL) { // Since overflow hasn't occured as of yet, we need to allocate memory for the overflow linked list.
-        head = new linkedList<hashTableItem>;
+        head = new linkedListNode<hashTableItem>;
     }
 
     head->insert(item); // Takes care of both cases. When linked-list is empty as well as when it has some elements.
@@ -119,7 +119,7 @@ string hashSearch(hashTable* table, string key) {
     // and returns NULL if it doesn't exist
     int index = hashFunction(key);
     hashTableItem* item = table->items[index];
-    linkedList<hashTableItem>* overflowLinkedList = table->overflowLinkedLists[index];
+    linkedListNode<hashTableItem>* overflowLinkedList = table->overflowLinkedLists[index];
 
     // Ensure that we move to a non NULL item
     while(item != NULL) {
@@ -161,7 +161,7 @@ void printTable(hashTable* table) {
             cout << "Index:" << index << ", " << table->items[index] << endl;
         }
         
-        linkedList<hashTableItem>* overflowLinkedList = table->overflowLinkedLists[index];
+        linkedListNode<hashTableItem>* overflowLinkedList = table->overflowLinkedLists[index];
         while (overflowLinkedList) {
             cout << "Index:" << index << ", " << overflowLinkedList->item << endl;
 
