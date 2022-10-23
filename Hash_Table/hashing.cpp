@@ -132,16 +132,19 @@ string hashSearch(hashTable* table, string key) {
             item = overflowLinkedList->item;
             overflowLinkedList = overflowLinkedList->next;
         }
-        
+        else {
+            break; // For the condition when the item's key doesn't match, as well as the overflowLinkedList is NULL, so no more elements are left to check. So, we can safely terminate the while loop.
+        }
+
     }
-    return "No corresponding value for this key.";
+    return "";
 }
 
 // yeh printing
 void printSearch(hashTable* table, string key) {
     string val = hashSearch(table, key);
     if (val == "") {
-        cout << "Key:"<< key <<" does not exist" << endl;
+        cout << "Key:"<< key <<" does not have a corresponding value." << endl;
         return;
     }
     else {
@@ -173,11 +176,13 @@ int main() {
 
     // cout << hashVal << endl;
 
-    // hashVal = hashFunction("rohan");
+    // hashVal = hashFunction("soham");
 
     // cout << hashVal << endl;
 
     hashTable* tablePointer = new hashTable(CAPACITY);
+
+    //! NOTE: rohan, soham and mayhul each have hash value of 6 for the current hashing function.
 
     hashTableInsert(tablePointer, "mayhul", "buri-buri"); // Name followed by nick name
     hashTableInsert(tablePointer, "rohan", "batman");
@@ -185,7 +190,13 @@ int main() {
     printTable(tablePointer);
 
 
+    // Testing hashSearch
     cout << hashSearch(tablePointer, "rohan") << endl;
+
+    // Testing printSearch
+    printSearch(tablePointer, "rohan");
+    printSearch(tablePointer, "soham");
+
 
     return 0;
 }
