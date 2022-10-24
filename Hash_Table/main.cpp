@@ -70,7 +70,7 @@ int hashFunction(string name){
 void handleCollision(hashTable* table, unsigned long index, hashTableItem* item) {
 }
 
-void hashTableInsert(hashTable* table, string key, string value) {
+void hashInsert(hashTable* table, string key, string value) {
     // Create the item
     hashTableItem* item = create_item(key, value);
 
@@ -148,7 +148,13 @@ void printTable(hashTable* table) {
 }
 
 int main() {
-  int hash = hashFunction("mayhul");
-  
-  cout << hash;
+    hashTable* ht = create_table(CAPACITY);
+    hashInsert(ht, "1", "First address");
+    hashInsert(ht, "2", "Second address");
+    printSearch(ht, "1");
+    printSearch(ht, "2");
+    printSearch(ht, "3");
+    printTable(ht);
+    
+    return 0;
 }
