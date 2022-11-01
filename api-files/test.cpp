@@ -5,7 +5,6 @@
 #include "string"
 #include "crow.h"
 
-
 #include "../user-defined-header-files/hashing.h"
 
 using namespace std;
@@ -51,45 +50,45 @@ int main() {
         return crow::response(200, "Database created.\n");
     });
 
-    // // GET ROUTE (READ)
-    // CROW_ROUTE(app, "/api/search_student_record")([&](const crow::request& req) {
+    // GET ROUTE (READ)
+    CROW_ROUTE(app, "/api/search_student_record")([&](const crow::request& req) {
 
-    //     auto teacherName = req.url_params.get("teacher_name");
-    //     auto studentName = req.url_params.get("student_name");
+        auto teacherName = req.url_params.get("teacher_name");
+        auto studentName = req.url_params.get("student_name");
         
-    //     if ( !studentName ) {
-    //         return crow::response(400, "Name parameter not set");
-    //     }
+        if ( !studentName ) {
+            return crow::response(400, "Name parameter not set");
+        }
             
-    //     try {
-    //         hashTableItem* teacherHashValue = hashSearch(tablePointer, teacherName);
-    //         if(!teacherHashValue) {
-    //             return crow::response(404, "Database doesn't exist. Please make a create request first.\n");
-    //         }
+        try {
+            hashTableItem* teacherHashValue = hashSearch(tablePointer, teacherName);
             
-    //         Node* studentNode = searchNode(teacherHashValue->teacherDB, studentName);
+            if(!teacherHashValue) {
+                return crow::response(404, "Database doesn't exist. Please make a create request first.\n");
+            }
+            
+            Node* studentNode = searchNode(teacherHashValue->teacherDB, studentName);
 
-    //         if(!studentNode) {
-    //             return crow::response(404, "Student record doesn't exist.\n");
-    //         }   
+            if(!studentNode) {
+                return crow::response(404, "Student record doesn't exist.\n");
+            }   
 
-    //         string message = "Database Name: " + studentNode->name
-    //         return crow::response(200, "")
+            string message = "Teacher Name: " + string(teacherName) + "\nStudent Name: " + string(studentName) + "\nAge: " + to_string(studentNode->age) + "\nHeight: " + to_string(studentNode->height) + "\nCGPA: " + to_string(studentNode->cgpa) + "\n"; 
+            
+            return crow::response(200, message);
 
-    //         /*
-    //         TODO:
-    //             - First check the database name
-    //             - Try to find name in the database
-    //             - Then send data respective to that name
-    //         */
-    //     } 
-    //     catch (const std::runtime_error &err) {
-    //         string message = "Internal Server Error";
-    //         return crow::response(500, message);
-    //     }
-
-    //     return crow::response(200, "Yaha peh json data daalna hain with all data");
-    // });
+            /*
+            TODO:
+                - First check the database name
+                - Try to find name in the database
+                - Then send data respective to that name
+            */
+        } 
+        catch (const std::runtime_error &err) {
+            string message = "Internal Server Error";
+            return crow::response(500, message);
+        }
+    });
 
     // PATCH ROUTE (UPDATE)
     CROW_ROUTE(app, "/api/update_db")([&](const crow::request& req) {
@@ -115,8 +114,6 @@ int main() {
            studentNode -> cgpa = strtod(cgpa, NULL);
 
            hashTableUpdateDatabaseRecords(tablePointer, teacherName, studentNode);
-           
-           return crow::response(200, "Data added.\n");
         }
         catch (const std::runtime_error &err) {
             return crow::response(500, studentName);
