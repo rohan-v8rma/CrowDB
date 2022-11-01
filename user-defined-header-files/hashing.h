@@ -1,5 +1,6 @@
 #include <iostream>
-#include "./linked-list.h"
+#include "./linked_list.h"
+#include "./avl_tree.h"
 
 using namespace std;
 #define CAPACITY 10 // Size of the Hash Table
@@ -9,24 +10,24 @@ using namespace std;
 class hashTableItem {
     
 public:
-    string key;
-    string value;
+    string teacherName;
+    Node* teacherDB;
 
     // Member functions
     hashTableItem() {
-      key = "";
-      value = "";
+      teacherName = "";
+      teacherDB = NULL;
     }
 
-    hashTableItem(string key, string value) {
-      this->key = key;
-      this->value = value;
+    hashTableItem(string teacherName, Node* teacherDB) {
+      this->teacherName = teacherName;
+      this->teacherDB = teacherDB;
     }
 };
 
 // Overloaded the stream insertion operator for easily printing `hashTableItem` instance variables
 ostream& operator << (ostream& out, hashTableItem* item) {
-    out << "Key: " << item->key << ", Value: " << item->value;
+    out << "teacherName: " << item->teacherName << ", Value: " << item->teacherDB;
     return out;
 }
 
@@ -36,7 +37,7 @@ class hashTable {
 public:
     hashTableItem** items;
     linkedListNode<hashTableItem>** overflowLinkedLists;
-    int hashLimit = 10; // Available hash values are 0 to 9. The maximum amount of maps the hash table can contain is 10 in this case, but it is possible that two keys have the same hash value and hash value is unoccupied.
+    int hashLimit = 10; // Available hash values are 0 to 9. The maximum amount of maps the hash table can contain is 10 in this case, but it is possible that two teacherNames have the same hash value and hash value is unoccupied.
     int count = 0;
 
     // Member functions
@@ -64,6 +65,43 @@ int hashFunction(string name){
   return hash % CAPACITY; 
 }
 
+hashTableItem* hashSearch(hashTable* table, string teacherName) {
+    // Searches the teacherName in the hashtable
+    // and returns NULL if it doesn't exist
+    int index = hashFunction(teacherName);
+
+    hashTableItem* item = table->items[index];
+    
+    linkedListNode<hashTableItem>* overflowLinkedList = table->overflowLinkedLists[index];
+
+    // Ensure that we move to a non NULL item
+    while(item != NULL) {
+        if (item->teacherName == teacherName) { // Returning the value only if it matches.
+            return item;
+        }
+
+        // Changing item to the items present in the overflowLinkedList of the corresponding index hash value
+        if(overflowLinkedList != NULL) {
+            item = overflowLinkedList->item;
+            overflowLinkedList = overflowLinkedList->next;
+        }
+        else {
+            break; // For the condition when the item's teacherName doesn't match, as well as the overflowLinkedList is NULL, so no more elements are left to check. So, we can safely terminate the while loop.
+        }
+
+    }
+    return NULL;
+}
+
+int doesDBExist(hashTable* table, string teacherName) {
+    if(hashSearch(table, teacherName)) {
+        return 1; // DB doesn't exist
+    }
+    else {
+        return 0;
+    }
+}
+
 void handleCollision(hashTable* table, unsigned long index, hashTableItem* item) { // `index` is the corresponding index position of the hash.
     linkedListNode<hashTableItem>* head = table->overflowLinkedLists[index];
 
@@ -74,18 +112,17 @@ void handleCollision(hashTable* table, unsigned long index, hashTableItem* item)
     head->insert(item); // Takes care of both cases. When linked-list is empty as well as when it has some elements.
 
     table->overflowLinkedLists[index] = head;
+    table->count++;
 }
 
-void hashTableInsert(hashTable* table, string key, string value) {
-    // Create the item
-    hashTableItem* item = new hashTableItem(key, value);
-
+void hashTableInsertDB(hashTable* table, string teacherName, Node* teacherDB) {
+    
     // Compute the index
-    unsigned long index = hashFunction(key);
+    unsigned long index = hashFunction(teacherName);
 
     hashTableItem* currentItem = table->items[index];
     
-    if (currentItem == NULL) { // Key does not exist.
+    if (currentItem == NULL) { // teacherName does not exist.
         if (table->count == table->hashLimit) {
             // Hash Table Full
             cout << ("Insert Error: Hash Table is full\n") << endl;
@@ -93,64 +130,58 @@ void hashTableInsert(hashTable* table, string key, string value) {
             return;
         }
         
-        // Insert directly
-        table->items[index] = item; 
+        // Creating and inserting the item directly
+        table->items[index] = new hashTableItem(teacherName, teacherDB); 
         table->count++;
     }
-
+    else if(!doesDBExist(table, teacherName)) { // When DB doesn't exist, only then do we try to insert it using collision resolution.
+        // Scenario 2: Collision resolution
+        handleCollision(table, index, new hashTableItem(teacherName, teacherDB));
+        return;
+    }
     else {
-            // Scenario 1: The key of the received item and the pre-existing item is same so we only need to update the value.
-            if (currentItem->key ==  key) {
-                table->items[index]->value = value;
-                return;
-            }
-        else {
-            // Scenario 2: Collision
-            handleCollision(table, index, item);
-            return;
-        }
+        cout << "teacherName:"<< teacherName <<" already has a database in our system. Creation aborted." << endl;
     }
 }
 
-// hash-search
+void hashTableUpdateDB(hashTable* table, string teacherName, Node* studentNode) {
+    if(!doesDBExist) { // Database doesn't exist, so not possible to update it
+        cout << "The database doesn't exist, so it is not possible to update it." << endl;
+        return;
+    }
+    // Compute the index
+    unsigned long index = hashFunction(teacherName);
 
-string hashSearch(hashTable* table, string key) {
-    // Searches the key in the hashtable
-    // and returns NULL if it doesn't exist
-    int index = hashFunction(key);
     hashTableItem* item = table->items[index];
     linkedListNode<hashTableItem>* overflowLinkedList = table->overflowLinkedLists[index];
 
-    // Ensure that we move to a non NULL item
-    while(item != NULL) {
-        if (item->key == key) { // Returning the value only if it matches.
-            return item->value;
+    while(true) {
+        if (item->teacherName == teacherName) { // Returning the value only if it matches.
+            item->teacherDB = insertNode(item->teacherDB, studentNode);
+            break;
         }
-
+    
         // Changing item to the items present in the overflowLinkedList of the corresponding index hash value
         if(overflowLinkedList != NULL) {
             item = overflowLinkedList->item;
             overflowLinkedList = overflowLinkedList->next;
         }
-        else {
-            break; // For the condition when the item's key doesn't match, as well as the overflowLinkedList is NULL, so no more elements are left to check. So, we can safely terminate the while loop.
-        }
-
     }
-    return "";
 }
+
 
 // yeh printing
-void printSearch(hashTable* table, string key) {
-    string val = hashSearch(table, key);
-    if (val == "") {
-        cout << "Key:"<< key <<" does not have a corresponding value." << endl;
-        return;
-    }
-    else {
-        cout << "Key:"<< key <<", Value:" << val << endl;
-    }
-}
+// void printSearch(hashTable* table, string teacherName) {
+//     hashTableItem* item = hashSearch(table, teacherName);
+//     if (item == NULL) {
+//         cout << "teacherName:"<< teacherName <<" does not have an existing Database in our system." << endl;
+//         return;
+//     }
+//     else {
+//         cout << "teacherName:"<< teacherName <<", Value:" << val << endl;
+//     }
+// }
+
 
 void printTable(hashTable* table) {
     cout << "\nHASH TABLE\n\n-------------------" << endl;

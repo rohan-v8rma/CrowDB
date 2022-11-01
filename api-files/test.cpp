@@ -4,10 +4,16 @@
 
 #include "string"
 #include "crow.h"
+
+#define CAPACITY 10 // Size of the Hash Table
+
+#include "../user-defined-header-files/hashing.h"
+
 using namespace std;
 
-int main()
-{
+int main() {
+    
+    hashTable* tablePointer = new hashTable(CAPACITY);
     /*
     SimpleApp class organizes all the different parts of Crow and 
     provides a simple interface to interact with these parts.
@@ -20,39 +26,43 @@ int main()
     });
 
     // POST ROUTE (CREATE)
-    CROW_ROUTE(app, "/api/create").methods(crow::HTTPMethod::POST)
-    ([&](const crow::request& req)
-    {
-        auto body = crow::json::load(req.body);
-        if (!body)
-            return crow::response(400, "Body is empty");
+    CROW_ROUTE(app, "/api/create_db")([&](const crow::request& req) {
+        
+        auto teacherName = req.url_params.get("teacher_name");
 
-        string dbName;
-        try {
-            dbName = body["database_name"].s();
-        } catch (const std::runtime_error &err) {
-            return crow::response(400, "Invalid body");
+        if ( !teacherName ) {
+            return crow::response(400, "Teacher name not specified.\n");
         }
-
+            
         try{
+            if( hashSearch(tablePointer, teacherName) ) {
+                return crow::response(200, "Database already exists.\n");
+            }
+            hashTableInsertDB(tablePointer, teacherName, NULL);
             /*
             TODO:
                 - Here cpp code goes to handle database creation using the name
             */
-        }catch (const std::runtime_error &err) {
+        }
+        catch (const std::runtime_error &err) {
             return crow::response(500, "Server error");
         }
-        return crow::response(200, "Database created");
+        
+        return crow::response(200, "Database created.\n");
     });
 
     // GET ROUTE (READ)
-    CROW_ROUTE(app, "/api/read").methods(crow::HTTPMethod::GET)
-    ([&](const crow::request& req){
-        auto dbName = req.url_params.get("database_name");
+    CROW_ROUTE(app, "/api/read")([&](const crow::request& req) {
+
         auto name = req.url_params.get("name");
-        if (!name || !dbName)
+        
+        if ( !name ) {
             return crow::response(400, "Name parameter not set");
+        }
+            
         try {
+
+            
             /*
             TODO:
                 - First check the database name
@@ -68,57 +78,61 @@ int main()
     });
 
     // PATCH ROUTE (UPDATE)
-    CROW_ROUTE(app, "/api/update").methods(crow::HTTPMethod::PATCH)
-    ([&](const crow::request& req)
-    {
-        auto body = crow::json::load(req.body);
-        if (!body)
-            return crow::response(400, "Body is empty/ No data given");
-        string name, age, weight;
-        try {
-            name = body["name"].s();
-            age = body["age"].s();
-            weight = body["weight"].s();
-        } catch (const std::runtime_error &err) {
-            return crow::response(400, "Invalid body");
+    CROW_ROUTE(app, "/api/update_db")([&](const crow::request& req) {
+        auto teacherName = req.url_params.get("teacher_name");
+        char* studentName = req.url_params.get("student_name");
+        auto age = req.url_params.get("age");
+        auto weight = req.url_params.get("weight");
+        auto cgpa = req.url_params.get("cgpa");
+        
+        if ( !teacherName || !studentName || !age || !weight || !cgpa ) {
+            return crow::response(400, "Data incomplete.");
         }
 
         try{
-            /*
-            TODO:
-                - Yaha peh database mein insert karna ka code
-            */
+           hashTableItem* teacherDB = hashSearch(tablePointer, teacherName);
+           if(!teacherDB) {
+                return crow::response(400, "Database doesn't exist. Please make a create request first.\n");
+           }
+
+           Node* studentNode = new Node;
+           studentNode -> age = stoi(age, NULL);
+           studentNode -> weight = strtod(weight, NULL);
+           studentNode -> cgpa = strtod(cgpa, NULL);
+
+           hashTableUpdateDB(tablePointer, teacherName, studentNode);
+           
+           return crow::response(200, "Data added.\n");
         }
         catch (const std::runtime_error &err) {
-            return crow::response(500, "Server Error");
+            return crow::response(500, studentName);
         }
         
-        return crow::response(200, "Data added");
+        // return crow::response(200, "Data added.\n");
     });
 
     // DELETE ROUTE (DELETE)
-    CROW_ROUTE(app, "/api/update").methods(crow::HTTPMethod::DELETE)
-    ([&](const crow::request& req)
-    {
-        auto body = crow::json::load(req.body);
-        if (!body)
-            return crow::response(400, "Body is empty");
-        string name;
-        try {
-            name = body["name"].s();
-        } catch (const std::runtime_error &err) {
-            return crow::response(400, "Invalid body");
-        }
-        try{
-            /*
-            TODO:
-                - CPP code to delete from database
-            */
-        } catch (const std::runtime_error &err) {
-            return crow::response(500, "Server error");
-        }
-        return crow::response(200, "Data deleted");
-    });
+    // CROW_ROUTE(app, "/api/update")([&](const crow::request& req)
+    // {
+    //     auto body = crow::json::load(req.body);
+    //     if (!body)
+    //         return crow::response(400, "Body is empty");
+    //     string name;
+    //     try {
+    //         name = body["name"].s();
+    //     } catch (const std::runtime_error &err) {
+    //         return crow::response(400, "Invalid body");
+    //     }
+    //     try{
+    //         /*
+    //         TODO:
+    //             - CPP code to delete from database
+    //         */
+    //     } catch (const std::runtime_error &err) {
+    //         return crow::response(500, "Server error");
+    //     }
+    //     return crow::response(200, "Data deleted");
+    // });
 
     // CROW_ROUTE(app, "/api/blogs")
     // ([&]()
