@@ -19,7 +19,7 @@ class Node {
     
     friend Node* balanceBST(Node* node);
 
-    friend Node* insertNode(Node* node, string studentName, int studentAge, double studentWeight, double CGPA);    
+    friend Node* insertNode(Node* node, Node* studentNode);    
 
     friend Node* minimumNodeFinder(Node* treePtr);
     friend Node* deleteNode(Node* node, string studentName);
@@ -207,25 +207,25 @@ Node* balanceBST(Node* node) {
     return node; // -1 <= balanceFactor <= 1
 }
 
-Node* insertNode(Node* node, string studentName, int studentAge, double studentWeight, double CGPA) {
+Node* insertNode(Node* node, Node* studentNode) {
 
     // 1. Performing regular recursive BST insertion
     if(node == NULL) {
-        return new Node(studentName, studentAge, studentWeight, CGPA); // this will have height = 0;
+        return new Node(studentNode->name, studentNode->age, studentNode->weight, studentNode->cgpa); // this will have height = 0;
     }
 
-    if( studentName < (node -> name) ) {
-        node->left = insertNode(node->left, studentName, studentAge, studentWeight, CGPA);
+    if( studentNode->name < (node -> name) ) {
+        node->left = insertNode(node->left, studentNode);
     }
-    else if( studentName > (node -> name) ) {
-        node->right = insertNode(node->right, studentName, studentAge, studentWeight, CGPA);
+    else if( studentNode->name > (node -> name) ) {
+        node->right = insertNode(node->right, studentNode);
     }
     else {
 
         // Updating values
-        node->age = studentAge;
-        node->weight = studentWeight;
-        node->cgpa = CGPA;
+        node->age = studentNode->age;
+        node->weight = studentNode->weight;
+        node->cgpa = studentNode->cgpa;
         
         return node; // No need to go any further since no insertion took place
     }
