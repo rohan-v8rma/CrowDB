@@ -5,7 +5,6 @@
 #include "string"
 #include "crow.h"
 
-#define CAPACITY 10 // Size of the Hash Table
 
 #include "../user-defined-header-files/hashing.h"
 
@@ -13,7 +12,7 @@ using namespace std;
 
 int main() {
     
-    hashTable* tablePointer = new hashTable(CAPACITY);
+    hashTable* tablePointer = new hashTable();
     /*
     SimpleApp class organizes all the different parts of Crow and 
     provides a simple interface to interact with these parts.
@@ -38,44 +37,59 @@ int main() {
             if( hashSearch(tablePointer, teacherName) ) {
                 return crow::response(200, "Database already exists.\n");
             }
-            hashTableInsertDB(tablePointer, teacherName, NULL);
+
+            insertDatabaseintoHashTable(tablePointer, teacherName, NULL);
             /*
             TODO:
                 - Here cpp code goes to handle database creation using the name
             */
         }
         catch (const std::runtime_error &err) {
-            return crow::response(500, "Server error");
+            return crow::response(500, "Internal Server Error.\n");
         }
         
         return crow::response(200, "Database created.\n");
     });
 
-    // GET ROUTE (READ)
-    CROW_ROUTE(app, "/api/read")([&](const crow::request& req) {
+    // // GET ROUTE (READ)
+    // CROW_ROUTE(app, "/api/search_student_record")([&](const crow::request& req) {
 
-        auto name = req.url_params.get("name");
+    //     auto teacherName = req.url_params.get("teacher_name");
+    //     auto studentName = req.url_params.get("student_name");
         
-        if ( !name ) {
-            return crow::response(400, "Name parameter not set");
-        }
+    //     if ( !studentName ) {
+    //         return crow::response(400, "Name parameter not set");
+    //     }
             
-        try {
-
+    //     try {
+    //         hashTableItem* teacherHashValue = hashSearch(tablePointer, teacherName);
+    //         if(!teacherHashValue) {
+    //             return crow::response(404, "Database doesn't exist. Please make a create request first.\n");
+    //         }
             
-            /*
-            TODO:
-                - First check the database name
-                - Try to find name in the database
-                - Then send data respective to that name
-            */
-        } catch (const std::runtime_error &err) {
-            string message = "Not able to find any database with such name";
-            return crow::response(404, message);
-        }
+    //         Node* studentNode = searchNode(teacherHashValue->teacherDB, studentName);
 
-        return crow::response(200, "Yaha peh json data daalna hain with all data");
-    });
+    //         if(!studentNode) {
+    //             return crow::response(404, "Student record doesn't exist.\n");
+    //         }   
+
+    //         string message = "Database Name: " + studentNode->name
+    //         return crow::response(200, "")
+
+    //         /*
+    //         TODO:
+    //             - First check the database name
+    //             - Try to find name in the database
+    //             - Then send data respective to that name
+    //         */
+    //     } 
+    //     catch (const std::runtime_error &err) {
+    //         string message = "Internal Server Error";
+    //         return crow::response(500, message);
+    //     }
+
+    //     return crow::response(200, "Yaha peh json data daalna hain with all data");
+    // });
 
     // PATCH ROUTE (UPDATE)
     CROW_ROUTE(app, "/api/update_db")([&](const crow::request& req) {
@@ -100,7 +114,7 @@ int main() {
            studentNode -> weight = strtod(weight, NULL);
            studentNode -> cgpa = strtod(cgpa, NULL);
 
-           hashTableUpdateDB(tablePointer, teacherName, studentNode);
+           hashTableUpdateDatabaseRecords(tablePointer, teacherName, studentNode);
            
            return crow::response(200, "Data added.\n");
         }
@@ -108,7 +122,7 @@ int main() {
             return crow::response(500, studentName);
         }
         
-        // return crow::response(200, "Data added.\n");
+        return crow::response(200, "Data added.\n");
     });
 
     // DELETE ROUTE (DELETE)

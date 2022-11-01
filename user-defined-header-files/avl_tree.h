@@ -245,6 +245,7 @@ Node* minimumNodeFinder(Node* treePtr) {
 
 Node* deleteNode(Node* node, string studentName) {
     if(node == NULL) {
+        cout << "Student record doesn't exist. Deletion aborted...\n";
         return node;
     }
 
@@ -301,6 +302,7 @@ Node* deleteNode(Node* node, string studentName) {
 
 Node* searchNode(Node* node, string studentName) {
     if(node == NULL) {
+        cout << "This student record is not present. Display operation aborted...\n";
         return NULL; // Node not present
     }
 
