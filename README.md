@@ -88,6 +88,18 @@ Yaha peh pictures daalenge ki jisse intersting lagegega. Gyan kam jodna hian yah
   - `CRUD` api(jo ham basically banarae hain)
   - Checkout `crow` docs jo hame backend banane mein help karra hain
 
+# Dependencies
+
+1. Crow
+Download the `.deb` file of the latest release from Crowcpp's github, [here](https://github.com/CrowCpp/Crow/releases/tag/v1.0+5).
+
+Simply install the `.deb` file, no other setup required.
+
+2. Boost
+```bash
+root@ubuntu$ sudo snap install libboost-all-dev
+```
+
 
 # Now making the project production ready...let say somewhat ready:)
 - Common problems of building projects “natively” on a workstation
@@ -118,6 +130,8 @@ class detail {
 ```
 
 The details of the person can be age, height, weight, etc. 
+
+Have a username MASTER, which can be used to get the information of all people, or check which people have a value for a particular parameter-
 
 ## Relational database
 
