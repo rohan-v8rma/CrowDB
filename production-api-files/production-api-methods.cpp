@@ -5,7 +5,7 @@
 #include "string"
 #include "crow.h"
 
-#include "../user-defined-header-files/hashing.h"
+#include "../production-user-defined-header-files/hashing.h"
 
 using namespace std;
 
@@ -194,55 +194,6 @@ int main() {
             return crow::response(500, message);
         }
     });
-    // DELETE ROUTE (DELETE)
-    // CROW_ROUTE(app, "/api/update")([&](const crow::request& req)
-    // {
-    //     auto body = crow::json::load(req.body);
-    //     if (!body)
-    //         return crow::response(400, "Body is empty");
-    //     string name;
-    //     try {
-    //         name = body["name"].s();
-    //     } catch (const std::runtime_error &err) {
-    //         return crow::response(400, "Invalid body");
-    //     }
-    //     try{
-    //         /*
-    //         TODO:
-    //             - CPP code to delete from database
-    //         */
-    //     } catch (const std::runtime_error &err) {
-    //         return crow::response(500, "Server error");
-    //     }
-    //     return crow::response(200, "Data deleted");
-    // });
-
-    // CROW_ROUTE(app, "/api/blogs")
-    // ([&]()
-    // {
-    //     auto r1 = redisClient.lrange("titles", 0, -1);
-    //     auto r2 = redisClient.lrange("contents", 0, -1);
-    //     redisClient.sync_commit();
-    //     r1.wait();
-    //     r2.wait();
-    //     auto r = r1.get().as_array();
-    //     std::vector<std::string> titles(r.size()), contents(r.size());
-    //     std::transform(r.begin(), r.end(), titles.begin(), [](const cpp_redis::reply &rep) { return rep.as_string(); });
-
-    //     auto rC = r2.get().as_array();
-    //     std::transform(rC.begin(), rC.end(), contents.begin(), [](const cpp_redis::reply &rep) { return rep.as_string(); });
-
-    //     std::vector<crow::json::wvalue> blogs;
-    //     for (int i = 0; i < titles.size(); i++)
-    //     {
-    //         blogs.push_back(crow::json::wvalue{
-    //             {"title", titles[i]},
-    //             {"content", contents[i]}
-    //         });
-    //     }
-
-    //     return crow::json::wvalue{{"data", blogs}};
-    // });
 
     app.port(3000).multithreaded().run();
 }
