@@ -157,7 +157,11 @@ class record {
 
 1. The api call `display_all_records` displays the contents of the avl tree database, using in order traversal. Which is why the students are displayed alphabetically. 
 
-2. 
+2. Currently, we are running this on local host, which is why our API calls have an IP address and a port in the URL, like so:
+    ```console
+    root@ubuntu~$ curl "http://127.0.0.1:3000/api/create_database?teacher_name=rachna"
+    ``` 
+    But, if we purchase or rent a domain name for our IP address, then we can make requests to that domain name, and it would be resolved
 
 # Report Explanations
 
