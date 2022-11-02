@@ -3,7 +3,7 @@
 #include "utility"
 
 #include "string"
-#include "crow.h"
+// #include "crow.h"
 
 #include "../user-defined-header-files/hashing.h"
 
@@ -24,7 +24,7 @@ int main() {
     });
 
     // POST ROUTE (CREATE)
-    CROW_ROUTE(app, "/api/create_db")([&](const crow::request& req) {
+    CROW_ROUTE(app, "/api/create_database")([&](const crow::request& req) {
         
         auto teacherName = req.url_params.get("teacher_name");
 
@@ -38,6 +38,8 @@ int main() {
             }
 
             insertDatabaseintoHashTable(tablePointer, teacherName, NULL);
+
+            return crow::response(200, "Database created.\n");
             /*
             TODO:
                 - Here cpp code goes to handle database creation using the name
@@ -46,12 +48,10 @@ int main() {
         catch (const std::runtime_error &err) {
             return crow::response(500, "Internal Server Error.\n");
         }
-        
-        return crow::response(200, "Database created.\n");
     });
 
     // GET ROUTE (READ)
-    CROW_ROUTE(app, "/api/search_student_record")([&](const crow::request& req) {
+    CROW_ROUTE(app, "/api/display_student_record")([&](const crow::request& req) {
 
         auto teacherName = req.url_params.get("teacher_name");
         auto studentName = req.url_params.get("student_name");
@@ -73,7 +73,7 @@ int main() {
                 return crow::response(404, "Student record doesn't exist.\n");
             }   
 
-            string message = "Teacher Name: " + string(teacherName) + "\nStudent Name: " + string(studentName) + "\nAge: " + to_string(studentNode->age) + "\nHeight: " + to_string(studentNode->height) + "\nCGPA: " + to_string(studentNode->cgpa) + "\n"; 
+            string message = "Teacher Name: " + string(teacherName) + "\nStudent Name: " + string(studentName) + "\nAge: " + to_string(studentNode->age) + "\nWeight: " + to_string(studentNode->weight) + "\nCGPA: " + to_string(studentNode->cgpa) + "\n"; 
             
             return crow::response(200, message);
 
@@ -91,7 +91,7 @@ int main() {
     });
 
     // PATCH ROUTE (UPDATE)
-    CROW_ROUTE(app, "/api/update_db")([&](const crow::request& req) {
+    CROW_ROUTE(app, "/api/update_database_record")([&](const crow::request& req) {
         auto teacherName = req.url_params.get("teacher_name");
         char* studentName = req.url_params.get("student_name");
         auto age = req.url_params.get("age");
@@ -109,6 +109,7 @@ int main() {
            }
 
            Node* studentNode = new Node;
+           studentNode -> name = string(studentName);
            studentNode -> age = stoi(age, NULL);
            studentNode -> weight = strtod(weight, NULL);
            studentNode -> cgpa = strtod(cgpa, NULL);
@@ -122,6 +123,38 @@ int main() {
         return crow::response(200, "Data added.\n");
     });
 
+    // DELETE ROUTE (DELETE)
+    CROW_ROUTE(app, "/api/delete_student_record")([&](const crow::request& req) {
+        auto teacherName = req.url_params.get("teacher_name");
+        auto studentName = req.url_params.get("student_name");
+
+        if ( !studentName ) {
+            
+            return crow::response(400, "Name parameter not set");
+        }
+        try {
+            hashTableItem* teacherHashValue = hashSearch(tablePointer, teacherName);
+            
+            if(!teacherHashValue) {
+                return crow::response(404, "Database doesn't exist. Please make a create request first.\n");
+            }
+            
+            Node* studentNode = searchNode(teacherHashValue->teacherDB, studentName);
+
+            if(!studentNode) {
+                return crow::response(404, "Student record doesn't exist.\n");
+            }   
+
+            hashTableDeleteFromDatabase(tablePointer, teacherName, studentName);
+
+            //TODO: 
+            return crow::response(200, "Record deleted.\n");
+        } 
+        catch (const std::runtime_error &err) {
+            string message = "Internal Server Error.\n";
+            return crow::response(500, message);
+        }
+    });
     // DELETE ROUTE (DELETE)
     // CROW_ROUTE(app, "/api/update")([&](const crow::request& req)
     // {

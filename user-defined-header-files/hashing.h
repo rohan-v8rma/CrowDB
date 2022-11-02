@@ -1,6 +1,8 @@
 #include <iostream>
 #include "./linked_list.h"
 #include "./avl_tree.h"
+// #include "crow.h"
+
 
 using namespace std;
 #define CAPACITY 100 // Size of the Hash Table
@@ -180,25 +182,34 @@ void hashTableUpdateDatabaseRecords(hashTable* table, string teacherName, Node* 
 }
 
 void hashTableDeleteFromDatabase(hashTable* table, string teacherName, string studentName) {
-    if(!doesDBExist) { // Database doesn't exist, so not possible to update it
-        cout << "The database doesn't exist, so it is not possible to delete it." << endl;
+
+    if(!doesDBExist(table, teacherName)) { // Database doesn't exist, so not possible to update it
+        //TODO: Change where responses come from
+        // return crow::response(404, "The database doesn't exist, so it is not possible to delete records from it.\n");
+        cout << "The database doesn't exist, so it is not possible to delete records from it.\n";
         return;
     }
     // Compute the index
     unsigned long index = hashFunction(teacherName);
 
-    hashTableItem* item = table->items[index];
+    hashTableItem* currentItem = table->items[index];
     linkedListNode<hashTableItem>* overflowLinkedList = table->overflowLinkedLists[index];
 
     while(true) {
-        if (item->teacherName == teacherName) { // Returning the value only if it matches.
-            item->teacherDB = deleteNode(item->teacherDB, studentName);
+        if(currentItem == NULL) {
+            cout << "Record not present. Deletion aborted...\n"; 
+            break;
+        }
+
+        if (currentItem->teacherName == teacherName) { // Returning the value only if it matches.
+
+            currentItem->teacherDB = deleteNode(currentItem->teacherDB, studentName);
             break;
         }
     
         // Changing item to the items present in the overflowLinkedList of the corresponding index hash value
         if(overflowLinkedList != NULL) {
-            item = overflowLinkedList->item;
+            currentItem = overflowLinkedList->item;
             overflowLinkedList = overflowLinkedList->next;
         }
     }
