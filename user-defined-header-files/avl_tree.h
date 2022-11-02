@@ -9,7 +9,7 @@ int getMax(int num1, int num2) {
 class Node {
 
     friend void preOrderTraversal(Node* rootNode);
-    friend void inOrderTraversal(Node* rootNode);
+    friend string inOrderTraversal(Node* rootNode, string result);
 
     friend Node* rightRotate(Node* rootPtr);
     friend Node* leftRotate(Node* rootPtr);
@@ -82,16 +82,18 @@ public:
 };
 
 // Visit the left node, then the root node, then the right node.
-void inOrderTraversal(Node* rootNode){
+string inOrderTraversal(Node* rootNode, string result) {
     if(rootNode == NULL) {
-        return;
+        return result;
     }
 
-    inOrderTraversal(rootNode->left);   
+    result += inOrderTraversal(rootNode->left, "");   
 
-    cout << rootNode->name << ", ";
+    result += string(rootNode->name) + ", " + to_string(rootNode->age) + ", " + to_string(rootNode->weight) + ", " + to_string(rootNode->cgpa) + ";\n";
 
-    inOrderTraversal(rootNode->right);
+    result += inOrderTraversal(rootNode->right, "");
+
+    return result;   
 }
 
 int getHeight(Node* node) {
@@ -259,7 +261,7 @@ Node* deleteNode(Node* node, string studentName) {
 
         //? Node with 0 children
         if(node -> left == NULL && node -> right == NULL) {
-            
+
             return NULL; // Instead of returning node, which would mean that the element would stay in the BST, we returned NULL which means the element would no longer be in BST.
 
         }
@@ -307,13 +309,12 @@ Node* searchNode(Node* node, string studentName) {
     }
 
     if( studentName < (node -> name) ) {
-        node->left = searchNode(node->left, studentName);
+        return searchNode(node->left, studentName);
     }
     else if( studentName > (node -> name) ) {
-        node->right = searchNode(node->right, studentName);
+        return searchNode(node->right, studentName);
     }
-    
-    //? Desired node found where studentName == node->name
+
     return node;
-    
+    //? Desired node found where studentName == node->name
 }

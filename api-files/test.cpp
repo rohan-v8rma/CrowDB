@@ -3,7 +3,7 @@
 #include "utility"
 
 #include "string"
-// #include "crow.h"
+#include "crow.h"
 
 #include "../user-defined-header-files/hashing.h"
 
@@ -29,17 +29,17 @@ int main() {
         auto teacherName = req.url_params.get("teacher_name");
 
         if ( !teacherName ) {
-            return crow::response(400, "Teacher name not specified.\n");
+            return crow::response(400, "Teacher name not specified.\n\n");
         }
             
         try{
             if( hashSearch(tablePointer, teacherName) ) {
-                return crow::response(200, "Database already exists.\n");
+                return crow::response(200, "Database already exists.\n\n");
             }
 
             insertDatabaseintoHashTable(tablePointer, teacherName, NULL);
 
-            return crow::response(200, "Database created.\n");
+            return crow::response(200, "Database created.\n\n");
             /*
             TODO:
                 - Here cpp code goes to handle database creation using the name
@@ -56,8 +56,12 @@ int main() {
         auto teacherName = req.url_params.get("teacher_name");
         auto studentName = req.url_params.get("student_name");
         
+        if ( !teacherName ) {
+            return crow::response(400, "Teacher name parameter not set");
+        }
+
         if ( !studentName ) {
-            return crow::response(400, "Name parameter not set");
+            return crow::response(400, "Student name parameter not set");
         }
             
         try {
@@ -69,13 +73,48 @@ int main() {
             
             Node* studentNode = searchNode(teacherHashValue->teacherDB, studentName);
 
+            printf("%p", studentNode);
+
             if(!studentNode) {
                 return crow::response(404, "Student record doesn't exist.\n");
             }   
 
-            string message = "Teacher Name: " + string(teacherName) + "\nStudent Name: " + string(studentName) + "\nAge: " + to_string(studentNode->age) + "\nWeight: " + to_string(studentNode->weight) + "\nCGPA: " + to_string(studentNode->cgpa) + "\n"; 
+            string message = "Teacher Name: " + string(teacherName) + "\nStudent Name: " + string(studentNode->name) + "\nAge: " + to_string(studentNode->age) + "\nWeight: " + to_string(studentNode->weight) + "\nCGPA: " + to_string(studentNode->cgpa) + "\n\n"; 
             
             return crow::response(200, message);
+
+            /*
+            TODO:
+                - First check the database name
+                - Try to find name in the database
+                - Then send data respective to that name
+            */
+        } 
+        catch (const std::runtime_error &err) {
+            string message = "Internal Server Error";
+            return crow::response(500, message);
+        }
+    });
+
+    // GET ROUTE (READ)
+    CROW_ROUTE(app, "/api/display_all_records")([&](const crow::request& req) {
+
+        auto teacherName = req.url_params.get("teacher_name");
+
+        if ( !teacherName ) {
+            return crow::response(400, "Teacher name parameter not set");
+        }
+
+        try {
+            hashTableItem* teacherHashValue = hashSearch(tablePointer, teacherName);
+            
+            if(!teacherHashValue) {
+                return crow::response(404, "Database doesn't exist. Please make a create request first.\n");
+            }
+
+            string message = hashTableDisplayAllDatabaseRecords(tablePointer, teacherName);
+            
+            return crow::response(200, message + "\n");
 
             /*
             TODO:
@@ -99,7 +138,7 @@ int main() {
         auto cgpa = req.url_params.get("cgpa");
         
         if ( !teacherName || !studentName || !age || !weight || !cgpa ) {
-            return crow::response(400, "Data incomplete.");
+            return crow::response(400, "Data incomplete.\n");
         }
 
         try{
@@ -120,7 +159,7 @@ int main() {
             return crow::response(500, studentName);
         }
         
-        return crow::response(200, "Data added.\n");
+        return crow::response(200, "Data added.\n\n");
     });
 
     // DELETE ROUTE (DELETE)
@@ -130,25 +169,25 @@ int main() {
 
         if ( !studentName ) {
             
-            return crow::response(400, "Name parameter not set");
+            return crow::response(400, "Name parameter not set.\n");
         }
         try {
             hashTableItem* teacherHashValue = hashSearch(tablePointer, teacherName);
             
             if(!teacherHashValue) {
-                return crow::response(404, "Database doesn't exist. Please make a create request first.\n");
+                return crow::response(404, "Database doesn't exist. Please make a create request first.\n\n");
             }
             
             Node* studentNode = searchNode(teacherHashValue->teacherDB, studentName);
 
             if(!studentNode) {
-                return crow::response(404, "Student record doesn't exist.\n");
+                return crow::response(404, "Student record doesn't exist.\n\n");
             }   
 
             hashTableDeleteFromDatabase(tablePointer, teacherName, studentName);
 
             //TODO: 
-            return crow::response(200, "Record deleted.\n");
+            return crow::response(200, "Record deleted.\n\n");
         } 
         catch (const std::runtime_error &err) {
             string message = "Internal Server Error.\n";

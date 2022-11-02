@@ -215,17 +215,40 @@ void hashTableDeleteFromDatabase(hashTable* table, string teacherName, string st
     }
 }
 
-// yeh printing
-// void printSearch(hashTable* table, string teacherName) {
-//     hashTableItem* item = hashSearch(table, teacherName);
-//     if (item == NULL) {
-//         cout << "teacherName:"<< teacherName <<" does not have an existing Database in our system." << endl;
-//         return;
-//     }
-//     else {
-//         cout << "teacherName:"<< teacherName <<", Value:" << val << endl;
-//     }
-// }
+string hashTableDisplayAllDatabaseRecords(hashTable* table, string teacherName) {
+    if(!doesDBExist(table, teacherName)) { // Database doesn't exist, so not possible to update it
+        //TODO: Change where responses come from
+        // return crow::response(404, "The database doesn't exist, so it is not possible to delete records from it.\n");
+        return( "Database does not exist.\n");
+    }
+
+    // Compute the index
+    unsigned long index = hashFunction(teacherName);
+
+    hashTableItem* currentItem = table->items[index];
+    linkedListNode<hashTableItem>* overflowLinkedList = table->overflowLinkedLists[index];
+
+    while(true) {
+        if(currentItem == NULL) {
+            cout << "Record not present. Deletion aborted...\n"; 
+            break;
+        }
+
+        if (currentItem->teacherName == teacherName) { // Returning the value only if it matches.
+
+            return( inOrderTraversal(currentItem->teacherDB, "") );
+            break;
+        }
+    
+        // Changing item to the items present in the overflowLinkedList of the corresponding index hash value
+        if(overflowLinkedList != NULL) {
+            currentItem = overflowLinkedList->item;
+            overflowLinkedList = overflowLinkedList->next;
+        }
+    }
+
+    return( "Database does not exist.\n");
+}
 
 
 void printTable(hashTable* table) {
