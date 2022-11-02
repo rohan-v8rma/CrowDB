@@ -1,56 +1,58 @@
 #include <iostream>
-#include "../user-defined-header-files/linked-list.h"
+#include "./linked-list.h"
 
 using namespace std;
 #define CAPACITY 10 // Size of the Hash Table
 
 // A Hash table is an array of items, which themselves are a {key: value} pair.
 // Hash-Item
+
+template <class T>
 class hashTableItem {
     
 public:
     string key;
-    string value;
+    T value;
 
     // Member functions
-    hashTableItem() {
-      key = "";
-      value = "";
-    }
+    hashTableItem<T>(){}; // This will handle initialization automatically
 
-    hashTableItem(string key, string value) {
+    hashTableItem<T>(string key, T value) {
       this->key = key;
       this->value = value;
     }
 };
 
-// Overloaded the stream insertion operator for easily printing `hashTableItem` instance variables
-ostream& operator << (ostream& out, hashTableItem* item) {
+template <class T>
+// Overloaded the stream insertion operator for easily printing `hashTableItem<T>` instance variables
+ostream& operator << (ostream& out, hashTableItem<T>* item) {
     out << "Key: " << item->key << ", Value: " << item->value;
     return out;
 }
 
 // Hash-Table
+
+template <class T>
 class hashTable {
     
 public:
-    hashTableItem** items;
-    linkedListNode<hashTableItem>** overflowLinkedLists;
+    hashTableItem<T>** items;
+    linkedListNode<hashTableItem<T>>** overflowLinkedLists;
     int hashLimit = 10; // Available hash values are 0 to 9. The maximum amount of maps the hash table can contain is 10 in this case, but it is possible that two keys have the same hash value and hash value is unoccupied.
     int count = 0;
 
     // Member functions
     hashTable() {
-        this->items = new hashTableItem*[hashLimit];
+        this->items = new hashTableItem<T>*[hashLimit];
         // All elements of the items array, which contains pointers, are by-default NULL.
-        this->overflowLinkedLists = new linkedListNode<hashTableItem>*[hashLimit];
+        this->overflowLinkedLists = new linkedListNode<hashTableItem<T>>*[hashLimit];
     }
 
     hashTable(int hashLimit) {
         this->hashLimit = hashLimit;
-        this->items = new hashTableItem*[hashLimit];
+        this->items = new hashTableItem<T>*[hashLimit];
         // All elements of the items array created above, which contains pointers, are by-default NULL. We need to allocate memory for each of them separately.
-        this->overflowLinkedLists = new linkedListNode<hashTableItem>*[hashLimit];
+        this->overflowLinkedLists = new linkedListNode<hashTableItem<T>>*[hashLimit];
     }   
   
 };
@@ -64,11 +66,12 @@ int hashFunction(string name){
   return hash % CAPACITY; 
 }
 
-void handleCollision(hashTable* table, unsigned long index, hashTableItem* item) { // `index` is the corresponding index position of the hash.
-    linkedListNode<hashTableItem>* head = table->overflowLinkedLists[index];
+template <class T>
+void handleCollision(hashTable<T>* table, unsigned long index, hashTableItem<T>* item) { // `index` is the corresponding index position of the hash.
+    linkedListNode<hashTableItem<T>>* head = table->overflowLinkedLists[index];
 
     if (head == NULL) { // Since overflow hasn't occured as of yet, we need to allocate memory for the overflow linked list.
-        head = new linkedListNode<hashTableItem>;
+        head = new linkedListNode<hashTableItem<T>>;
     }
 
     head->insert(item); // Takes care of both cases. When linked-list is empty as well as when it has some elements.
@@ -76,14 +79,15 @@ void handleCollision(hashTable* table, unsigned long index, hashTableItem* item)
     table->overflowLinkedLists[index] = head;
 }
 
-void hashTableInsert(hashTable* table, string key, string value) {
+template <class T>
+void hashTableInsert(hashTable<T>* table, string key, T value) {
     // Create the item
-    hashTableItem* item = new hashTableItem(key, value);
+    hashTableItem<T>* item = new hashTableItem<T>(key, value);
 
     // Compute the index
     unsigned long index = hashFunction(key);
 
-    hashTableItem* currentItem = table->items[index];
+    hashTableItem<T>* currentItem = table->items[index];
     
     if (currentItem == NULL) { // Key does not exist.
         if (table->count == table->hashLimit) {
@@ -113,13 +117,13 @@ void hashTableInsert(hashTable* table, string key, string value) {
 }
 
 // hash-search
-
-string hashSearch(hashTable* table, string key) {
+template <class T>
+string hashSearch(hashTable<T>* table, string key) {
     // Searches the key in the hashtable
     // and returns NULL if it doesn't exist
     int index = hashFunction(key);
-    hashTableItem* item = table->items[index];
-    linkedListNode<hashTableItem>* overflowLinkedList = table->overflowLinkedLists[index];
+    hashTableItem<T>* item = table->items[index];
+    linkedListNode<hashTableItem<T>>* overflowLinkedList = table->overflowLinkedLists[index];
 
     // Ensure that we move to a non NULL item
     while(item != NULL) {
@@ -140,8 +144,9 @@ string hashSearch(hashTable* table, string key) {
     return "";
 }
 
+template <class T>
 // yeh printing
-void printSearch(hashTable* table, string key) {
+void printSearch(hashTable<T>* table, string key) {
     string val = hashSearch(table, key);
     if (val == "") {
         cout << "Key:"<< key <<" does not have a corresponding value." << endl;
@@ -152,7 +157,8 @@ void printSearch(hashTable* table, string key) {
     }
 }
 
-void printTable(hashTable* table) {
+template <class T>
+void printTable(hashTable<T>* table) {
     cout << "\nHASH TABLE\n\n-------------------" << endl;
     
     for (int index = 0; index < table->hashLimit; index++) {
@@ -161,7 +167,7 @@ void printTable(hashTable* table) {
             cout << "Index:" << index << ", " << table->items[index] << endl;
         }
         
-        linkedListNode<hashTableItem>* overflowLinkedList = table->overflowLinkedLists[index];
+        linkedListNode<hashTableItem<T>>* overflowLinkedList = table->overflowLinkedLists[index];
         while (overflowLinkedList) {
             cout << "Index:" << index << ", " << overflowLinkedList->item << endl;
 
@@ -171,32 +177,32 @@ void printTable(hashTable* table) {
     cout << "-------------------\n\n";
 }
 
-int main() {
-    // int hashVal = hashFunction("mayhul");
+// int main() {
+//     // int hashVal = hashFunction("mayhul");
 
-    // cout << hashVal << endl;
+//     // cout << hashVal << endl;
 
-    // hashVal = hashFunction("soham");
+//     // hashVal = hashFunction("soham");
 
-    // cout << hashVal << endl;
+//     // cout << hashVal << endl;
 
-    hashTable* tablePointer = new hashTable(CAPACITY);
+//     hashTable* tablePointer = new hashTable(CAPACITY);
 
-    //! NOTE: rohan, soham and mayhul each have hash value of 6 for the current hashing function.
+//     //! NOTE: rohan, soham and mayhul each have hash value of 6 for the current hashing function.
 
-    hashTableInsert(tablePointer, "mayhul", "buri-buri"); // Name followed by nick name
-    hashTableInsert(tablePointer, "rohan", "batman");
+//     hashTableInsert(tablePointer, "mayhul", "buri-buri"); // Name followed by nick name
+//     hashTableInsert(tablePointer, "rohan", "batman");
 
-    printTable(tablePointer);
-
-
-    // Testing hashSearch
-    cout << hashSearch(tablePointer, "rohan") << endl;
-
-    // Testing printSearch
-    printSearch(tablePointer, "rohan");
-    printSearch(tablePointer, "soham");
+//     printTable(tablePointer);
 
 
-    return 0;
-}
+//     // Testing hashSearch
+//     cout << hashSearch(tablePointer, "rohan") << endl;
+
+//     // Testing printSearch
+//     printSearch(tablePointer, "rohan");
+//     printSearch(tablePointer, "soham");
+
+
+//     return 0;
+// }
