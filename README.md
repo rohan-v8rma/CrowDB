@@ -153,9 +153,15 @@ class record {
 
 1. How do we identify whether the person trying to access the program using the API is a new user or an existing user?
 
+# Explanation of working of functions 
+
+1. The api call `display_all_records` displays the contents of the avl tree database, using in order traversal. Which is why the students are displayed alphabetically. 
+
+2. 
 
 # Report Explanations
 
+<!-- NOTE: Don't write this in report. -->
 1. This is an experimental unsecured database, where anyone knowing the username/database-name can access, without any pass phrase.
 
 # TODO
