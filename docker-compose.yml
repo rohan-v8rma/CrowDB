@@ -1,0 +1,9 @@
+version: '3.9'
+
+services:
+  # our cpp api
+  api:
+    container_name: db-1
+    build: .
+    ports: 
+      - 3000:3000

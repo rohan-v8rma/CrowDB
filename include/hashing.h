@@ -3,7 +3,6 @@
 #include "./avl_tree.h"
 // #include "crow.h"
 
-
 using namespace std;
 #define CAPACITY 100 // Size of the Hash Table
 
@@ -61,7 +60,7 @@ public:
 // Hashing function
 int hashFunction(string name) {
   int hash = 0;
-  for(int i = 0; i< name.length(); i++){
+  for(int i = 0; i < name.length(); i++){
     hash += name[i];
   }
   return hash % CAPACITY; 

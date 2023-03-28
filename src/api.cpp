@@ -1,11 +1,9 @@
 #include "iostream"
 #include "vector"
 #include "utility"
-
 #include "string"
-#include "crow.h"
-
-#include "../production-user-defined-header-files/hashing.h"
+#include "crow_all.h"
+#include <hashing.h>
 
 using namespace std;
 

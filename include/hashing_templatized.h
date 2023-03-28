@@ -1,5 +1,5 @@
 #include <iostream>
-#include "./linked-list.h"
+#include "./linked_list.h"
 
 using namespace std;
 #define CAPACITY 10 // Size of the Hash Table

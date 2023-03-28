@@ -1,30 +1,3 @@
-```
-        ┌───┬─── Project overview
-        │   │
-        │   ├──► What does the project do
-        │   │
-        │   └──► Tech used
-        │
-        ├───┬─── Tech
-        │   │
-        │   ├──► Hashing
-        │   │
-        │   ├──► AVL
-        │   │
-        │   ├──► API
-        │   │
-        │   └──► Production Stuff
-        │
-        ├─────── Biblography + Further Aim
-
-Links:
-
-- https://www.digitalocean.com/community/tutorials/hash-table-in-c-plus-plus
-- https://ddanilov.me/dockerized-cpp-build
-- https://github.com/prince776/yt-projects/blob/master/cppREST/main.cpp
-- https://crowcpp.org/master/getting_started/setup/linux/
-```
-
 #  Hash Table ka kuch tuh likha hain 
 
 - A Hash Table in C/C++ (Associative array) is a data structure that maps keys to values. This uses a hash function to compute indexes for a key.
@@ -100,7 +73,6 @@ Simply install the `.deb` file, no other setup required.
 root@ubuntu$ sudo snap install libboost-all-dev
 ```
 
-
 # Now making the project production ready...let say somewhat ready:)
 - Common problems of building projects “natively” on a workstation
 > merko bas seekhna tha yeh part toh ham yeh bhi karre hain lol. Yeh ni pata ki docker/github-action/cmake inme kya cheez kese decide karni hoti
@@ -175,4 +147,59 @@ class record {
 Node(string s):data(s),next(NULL) {};
 Node(string s,Node* nd):data(s),next(nd) {};
 
+# Containerizing and scaling
 
+## CMake
+## Dockerfile
+## Docker-Networking
+## Docker-Compose
+## CI-CD Pipeline
+
+## Reference
+
+```
+Foo
+ ├── include
+ │   └── Foo
+ │       ├── Foo.h
+ │       └── ...
+ ├── src
+ │   ├── Foo.cpp
+ │   └── ...
+ |
+ ├── build
+ │   └── bin
+ |
+ ├── test
+ |   ├── test-bash-scripts
+ │   └── test-cpp-code     
+ |
+ └── libs
+     ├── A
+     │   ├── include
+     │   │   └── A
+     │   │       ├── A.h
+     │   │       └── ...
+     │   ├── src
+     │   │   ├── A.cpp
+     │   │   └── ...
+     │   └── test
+     │       └── ...
+     └── B
+         ├── include
+         │   └── B
+         │       ├── B.h
+         │       └── ...
+         ├── src
+         │   ├── B.cpp
+         │   └── ...
+         └── test
+             └── ...
+
+Links:
+
+- https://www.digitalocean.com/community/tutorials/hash-table-in-c-plus-plus
+- https://ddanilov.me/dockerized-cpp-build
+- https://github.com/prince776/yt-projects/blob/master/cppREST/main.cpp
+- https://crowcpp.org/master/getting_started/setup/linux/
+```
