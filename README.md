@@ -10,6 +10,10 @@
   - [Example HTTP requests](#example-http-requests)
   - [Hosting](#hosting)
   - [Basic Flow](#basic-flow)
+  - [Output of Testing](#output-of-testing)
+    - [Source Code of Script](#source-code-of-script)
+    - [Output Returned After Execution](#output-returned-after-execution)
+    - [CROW logs](#crow-logs)
 - [Dependencies](#dependencies)
   - [1. Crow](#1-crow)
   - [2. Boost](#2-boost)
@@ -167,6 +171,150 @@ But, if we were purchase or rent a domain name for our IP address OR used a host
   Balance can be regained by performing several kinds of rotations on the AVL tree - right-right, left-left, right-left or left-right rotations, described above.
 
 - AVL trees also offer a lower time complexity of `O(log(N))` for searching, insertion and deletion that is more efficient as compared to the time complexity of regular Binary search trees, which is `O(N)`.
+
+## Output of Testing
+
+For testing the functionality of the database, a shell script containing multiple `curl` commands is present in this repo, [here](./tests/test-bash-scripts/request-script.sh).
+
+### Source Code of Script
+
+```bash
+#!/usr/bin/bash
+
+# Creating a database for a teacher (this is an entry in the hash table)
+curl -X POST http://127.0.0.1:3000/api/create_database \
+-H 'Accept: text/plain' \
+-H 'Content-Type: application/json' \
+-d '{"teacher_name": "rachna"}'
+
+# Adding a record in database that has been added in the hash table in the previous command
+curl -X PATCH http://127.0.0.1:3000/api/update_database_record \
+-H 'Accept: text/plain' \
+-H 'Content-Type: application/json' \
+-d '{"teacher_name": "rachna", "student_name": "mayhul", "age": 19, "weight": 197, "cgpa": 9.7}'
+
+# Displaying that student record
+curl "http://127.0.0.1:3000/api/display_student_record?teacher_name=rachna&student_name=mayhul"
+
+curl -X PATCH http://127.0.0.1:3000/api/update_database_record \
+-H 'Accept: text/plain' \
+-H 'Content-Type: application/json' \
+-d '{"teacher_name": "rachna", "student_name": "rohan", "age": 20, "weight": 250, "cgpa": 9.5}'
+
+curl -X PATCH http://127.0.0.1:3000/api/update_database_record \
+-H 'Accept: text/plain' \
+-H 'Content-Type: application/json' \
+-d '{"teacher_name": "rachna", "student_name": "prerit", "age": 17, "weight": 150, "cgpa": 9.4}'
+
+curl -X PATCH http://127.0.0.1:3000/api/update_database_record \
+-H 'Accept: text/plain' \
+-H 'Content-Type: application/json' \
+-d '{"teacher_name": "rachna", "student_name": "soham", "age": 21, "weight": 350, "cgpa": 9.9}'
+
+
+curl -X DELETE http://127.0.0.1:3000/api/delete_student_record \
+-H "Accept: text/plain" \
+-H 'Content-Type: application/json' \
+-d '{"teacher_name": "rachna", "student_name": "mayhul"}'
+
+# GET method used by-default
+curl "http://127.0.0.1:3000/api/display_student_record?teacher_name=rachna&student_name=mayhul"
+
+# Hash Collision below
+curl -X POST http://127.0.0.1:3000/api/create_database \
+-H 'Accept: text/plain' \
+-H 'Content-Type: application/json' \
+-d '{"teacher_name": "archna"}'
+
+# Adding student records for the second teacher
+curl -X PATCH http://127.0.0.1:3000/api/update_database_record \
+-H 'Accept: text/plain' \
+-H 'Content-Type: application/json' \
+-d '{"teacher_name": "archna", "student_name": "aakash", "age": 11, "weight": 250, "cgpa": 7.7}'
+
+curl -X PATCH http://127.0.0.1:3000/api/update_database_record \
+-H 'Accept: text/plain' \
+-H 'Content-Type: application/json' \
+-d '{"teacher_name": "archna", "student_name": "harry", "age": 14, "weight": 450, "cgpa": 7.0}'
+
+curl -X PATCH http://127.0.0.1:3000/api/update_database_record \
+-H 'Accept: text/plain' \
+-H 'Content-Type: application/json' \
+-d '{"teacher_name": "archna", "student_name": "sameer", "age": 16, "weight": 192, "cgpa": 8.7}'
+
+# Displaying records of the second teacher
+curl "http://127.0.0.1:3000/api/display_all_records?teacher_name=archna"
+```
+
+### Output Returned After Execution
+
+```
+Database created.
+
+Data added.
+
+Teacher Name: rachna
+Student Name: mayhul
+Age: 19
+Weight: 197.000000
+CGPA: 9.700000
+
+Data added.
+
+Data added.
+
+Data added.
+
+Record deleted.
+
+Student record doesn't exist.
+
+Database created.
+
+Data added.
+
+Data added.
+
+Data added.
+
+aakash, 11, 250.000000, 7.700000;
+harry, 14, 450.000000, 7.000000;
+sameer, 16, 192.000000, 8.700000;
+```
+
+### CROW logs
+
+```
+(2023-04-02 10:31:58) [INFO    ] Crow/1.0 server is running at http://0.0.0.0:3000 using 12 threads
+(2023-04-02 10:31:58) [INFO    ] Call `app.loglevel(crow::LogLevel::Warning)` to hide Info level logs.
+(2023-04-02 10:32:21) [INFO    ] Request: 127.0.0.1:58004 0x562dd24fa3e0 HTTP/1.1 POST /api/create_database
+(2023-04-02 10:32:21) [INFO    ] Response: 0x562dd24fa3e0 /api/create_database 200 0
+(2023-04-02 10:32:21) [INFO    ] Request: 127.0.0.1:58012 0x7fb8b8000c20 HTTP/1.1 PATCH /api/update_database_record
+(2023-04-02 10:32:21) [INFO    ] Response: 0x7fb8b8000c20 /api/update_database_record 200 0
+(2023-04-02 10:32:21) [INFO    ] Request: 127.0.0.1:58018 0x7fb8b80022e0 HTTP/1.1 GET /api/display_student_record
+(2023-04-02 10:32:21) [INFO    ] Response: 0x7fb8b80022e0 /api/display_student_record?teacher_name=rachna&student_name=mayhul 200 0
+(2023-04-02 10:32:21) [INFO    ] Request: 127.0.0.1:58032 0x7fb8b8000c20 HTTP/1.1 PATCH /api/update_database_record
+(2023-04-02 10:32:21) [INFO    ] Response: 0x7fb8b8000c20 /api/update_database_record 200 0
+(2023-04-02 10:32:21) [INFO    ] Request: 127.0.0.1:58044 0x7fb8b80022e0 HTTP/1.1 PATCH /api/update_database_record
+(2023-04-02 10:32:21) [INFO    ] Response: 0x7fb8b80022e0 /api/update_database_record 200 0
+(2023-04-02 10:32:21) [INFO    ] Request: 127.0.0.1:58048 0x7fb8b8000c20 HTTP/1.1 PATCH /api/update_database_record
+(2023-04-02 10:32:21) [INFO    ] Response: 0x7fb8b8000c20 /api/update_database_record 200 0
+(2023-04-02 10:32:21) [INFO    ] Request: 127.0.0.1:58050 0x7fb8b80022e0 HTTP/1.1 DELETE /api/delete_student_record
+(2023-04-02 10:32:21) [INFO    ] Response: 0x7fb8b80022e0 /api/delete_student_record 200 0
+(2023-04-02 10:32:21) [INFO    ] Request: 127.0.0.1:58064 0x7fb8b8000c20 HTTP/1.1 GET /api/display_student_record
+This student record is not present. Display operation aborted...
+(2023-04-02 10:32:21) [INFO    ] Response: 0x7fb8b8000c20 /api/display_student_record?teacher_name=rachna&student_name=mayhul 404 0
+(2023-04-02 10:32:21) [INFO    ] Request: 127.0.0.1:58072 0x7fb8b80022e0 HTTP/1.1 POST /api/create_database
+(2023-04-02 10:32:21) [INFO    ] Response: 0x7fb8b80022e0 /api/create_database 200 0
+(2023-04-02 10:32:21) [INFO    ] Request: 127.0.0.1:58086 0x7fb8b8000c20 HTTP/1.1 PATCH /api/update_database_record
+(2023-04-02 10:32:21) [INFO    ] Response: 0x7fb8b8000c20 /api/update_database_record 200 0
+(2023-04-02 10:32:21) [INFO    ] Request: 127.0.0.1:58094 0x7fb8b80022e0 HTTP/1.1 PATCH /api/update_database_record
+(2023-04-02 10:32:21) [INFO    ] Response: 0x7fb8b80022e0 /api/update_database_record 200 0
+(2023-04-02 10:32:21) [INFO    ] Request: 127.0.0.1:58098 0x7fb8b8000c20 HTTP/1.1 PATCH /api/update_database_record
+(2023-04-02 10:32:21) [INFO    ] Response: 0x7fb8b8000c20 /api/update_database_record 200 0
+(2023-04-02 10:32:21) [INFO    ] Request: 127.0.0.1:58102 0x7fb8b80022e0 HTTP/1.1 GET /api/display_all_records
+(2023-04-02 10:32:21) [INFO    ] Response: 0x7fb8b80022e0 /api/display_all_records?teacher_name=archna 200 0
+```
 
 ---
 
