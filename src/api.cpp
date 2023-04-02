@@ -28,14 +28,20 @@ int main() {
     });
 
     // POST ROUTE (CREATE)
-    CROW_ROUTE(app, "/api/create_database")([&](const crow::request& req) {
-        
-        auto teacherName = req.url_params.get("teacher_name");
+    CROW_ROUTE(app, "/api/create_database").methods(crow::HTTPMethod::POST)
+    ([&](const crow::request& req)
+    {
+        auto body = crow::json::load(req.body);
+        if (!body)
+            return crow::response(400, "Body is empty.\n\n");
 
-        if ( !teacherName ) {
+        string teacherName;
+        try {
+            teacherName = body["teacher_name"].s();
+        } catch (const std::runtime_error &err) {
             return crow::response(400, "Teacher name not specified.\n\n");
         }
-            
+
         try{
             if( hashSearch(tablePointer, teacherName) ) {
                 return crow::response(200, "Database already exists.\n\n");
@@ -50,29 +56,33 @@ int main() {
             */
         }
         catch (const std::runtime_error &err) {
-            return crow::response(500, "Internal Server Error.\n");
+            return crow::response(500, "Internal Server Error.\n\n");
         }
+        return crow::response(200, "Database created.\n\n");
     });
 
-    // GET ROUTE (READ)
-    CROW_ROUTE(app, "/api/display_student_record")([&](const crow::request& req) {
+
+    // GET ROUTE (READ)    
+    CROW_ROUTE(app, "/api/display_student_record")
+    ([&](const crow::request& req) 
+    {
 
         auto teacherName = req.url_params.get("teacher_name");
         auto studentName = req.url_params.get("student_name");
         
         if ( !teacherName ) {
-            return crow::response(400, "Teacher name parameter not set");
+            return crow::response(400, "Teacher name parameter not set.\n\n");
         }
 
         if ( !studentName ) {
-            return crow::response(400, "Student name parameter not set");
+            return crow::response(400, "Student name parameter not set.\n\n");
         }
             
         try {
             hashTableItem* teacherHashValue = hashSearch(tablePointer, teacherName);
             
             if(!teacherHashValue) {
-                return crow::response(404, "Database doesn't exist. Please make a create request first.\n");
+                return crow::response(404, "Database doesn't exist. Please make a create request first.\n\n");
             }
             
             Node* studentNode = searchNode(teacherHashValue->teacherDB, studentName);
@@ -100,7 +110,9 @@ int main() {
     });
 
     // GET ROUTE (READ)
-    CROW_ROUTE(app, "/api/display_all_records")([&](const crow::request& req) {
+    CROW_ROUTE(app, "/api/display_all_records")
+    ([&](const crow::request& req) 
+    {
 
         auto teacherName = req.url_params.get("teacher_name");
 
@@ -112,7 +124,7 @@ int main() {
             hashTableItem* teacherHashValue = hashSearch(tablePointer, teacherName);
             
             if(!teacherHashValue) {
-                return crow::response(404, "Database doesn't exist. Please make a create request first.\n");
+                return crow::response(404, "Database doesn't exist. Please make a create request first.\n\n");
             }
 
             string message = hashTableDisplayAllDatabaseRecords(tablePointer, teacherName);
@@ -122,58 +134,95 @@ int main() {
             /*
             TODO:
                 - First check the database name
-                - Try to find name in the database
-                - Then send data respective to that name
+                - Send all names in that database
             */
         } 
         catch (const std::runtime_error &err) {
-            string message = "Internal Server Error";
+            string message = "Internal Server Error.\n\n";
             return crow::response(500, message);
         }
     });
 
     // PATCH ROUTE (UPDATE)
-    CROW_ROUTE(app, "/api/update_database_record")([&](const crow::request& req) {
-        auto teacherName = req.url_params.get("teacher_name");
-        char* studentName = req.url_params.get("student_name");
-        auto age = req.url_params.get("age");
-        auto weight = req.url_params.get("weight");
-        auto cgpa = req.url_params.get("cgpa");
+    CROW_ROUTE(app, "/api/update_database_record").methods(crow::HTTPMethod::PATCH)
+    ([&](const crow::request& req)
+    {
+        auto body = crow::json::load(req.body);
+        if (!body) {
+            return crow::response(400, "Body is empty/No data given.\n\n");
+        }
+        string 
+            teacherName, 
+            studentName;
         
-        if ( !teacherName || !studentName || !age || !weight || !cgpa ) {
-            return crow::response(400, "Data incomplete.\n");
+        int age;
+        
+        double
+            cgpa,
+            weight;
+        
+        try {
+            teacherName = body["teacher_name"].s();
+            studentName = body["student_name"].s();
+            age = body["age"].i();
+            cgpa = body["cgpa"].d();
+            weight = body["weight"].d();
+            
+        } 
+        catch (const std::runtime_error &err) {
+            return crow::response(400, "Data incomplete.\n\n");
         }
 
         try{
            hashTableItem* teacherDB = hashSearch(tablePointer, teacherName);
            if(!teacherDB) {
-                return crow::response(400, "Database doesn't exist. Please make a create request first.\n");
+                return crow::response(400, "Database doesn't exist. Please make a create request first.\n\n");
            }
 
            Node* studentNode = new Node;
            studentNode -> name = string(studentName);
-           studentNode -> age = stoi(age, NULL);
-           studentNode -> weight = strtod(weight, NULL);
-           studentNode -> cgpa = strtod(cgpa, NULL);
+           studentNode -> age = age;
+           studentNode -> weight = weight;
+           studentNode -> cgpa = cgpa;
 
            hashTableUpdateDatabaseRecords(tablePointer, teacherName, studentNode);
+
+           /*
+            TODO:
+                - Inserting to database
+            */
         }
         catch (const std::runtime_error &err) {
-            return crow::response(500, studentName);
+            return crow::response(500, "Server Error.\n\n");
+            // return crow::response(500, studentName);
         }
         
         return crow::response(200, "Data added.\n\n");
     });
 
     // DELETE ROUTE (DELETE)
-    CROW_ROUTE(app, "/api/delete_student_record")([&](const crow::request& req) {
-        auto teacherName = req.url_params.get("teacher_name");
-        auto studentName = req.url_params.get("student_name");
-
-        if ( !studentName ) {
-            
-            return crow::response(400, "Name parameter not set.\n");
+    CROW_ROUTE(app, "/api/delete_student_record").methods(crow::HTTPMethod::DELETE)
+    ([&](const crow::request& req) 
+    {
+        
+        auto body = crow::json::load(req.body);
+        if (!body) {
+            return crow::response(400, "Body is empty.\n\n");
         }
+        
+        string 
+            teacherName, 
+            studentName;
+
+        try {
+            teacherName = body["teacher_name"].s();
+            studentName = body["student_name"].s();
+        } 
+        catch (const std::runtime_error &err) {
+            return crow::response(400, "Invalid body.\n\n");
+        }
+
+
         try {
             hashTableItem* teacherHashValue = hashSearch(tablePointer, teacherName);
             
@@ -193,9 +242,10 @@ int main() {
             return crow::response(200, "Record deleted.\n\n");
         } 
         catch (const std::runtime_error &err) {
-            string message = "Internal Server Error.\n";
+            string message = "Internal Server Error.\n\n";
             return crow::response(500, message);
         }
+        return crow::response(200, "Data deleted.\n\n");
     });
 
     app.port(3000).multithreaded().run();
