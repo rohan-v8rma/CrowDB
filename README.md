@@ -1,4 +1,4 @@
-#  Hash Table ka kuch tuh likha hain 
+# What are Hash Tables?
 
 - A Hash Table in C/C++ (Associative array) is a data structure that maps keys to values. This uses a hash function to compute indexes for a key.
 Based on the Hash Table index, we can store the value at the appropriate location.
@@ -14,21 +14,21 @@ So, on average, the `time complexity is a constant O(1)` access time. This is ca
   - A Hash Table Data Structure that supports insert, search and delete operations.
   - A Data Structure to account for collision of keys
 
-## Deep-Dive for hash-map wala part
+<!-- ## Deep-Dive for hash-map wala part
 
 Yaha peh deep-dive/steps likhenge ki hamne kese hash map wala part kiya
-Basically functions jo jo banaye hain uska quick overview
+Basically functions jo jo banaye hain uska quick overview -->
 
-# AVL ka kuch kuch
+<!-- # AVL ka kuch kuch
 
 yeh toh tune already readme banai hogi isme voh hee daal dio
 
-## Deep-Dive for AVL wala part if needed
+## Deep-Dive for AVL wala part if needed -->
 
 # API
 
-yaha peh basic needs aur chaatne wali lines. Iska deep dive likhne ki zaroorat ni
-Yaha peh pictures daalenge ki jisse intersting lagegega. Gyan kam jodna hian yaha peh
+<!-- yaha peh basic needs aur chaatne wali lines. Iska deep dive likhne ki zaroorat ni
+Yaha peh pictures daalenge ki jisse intersting lagegega. Gyan kam jodna hian yaha peh -->
 
 - Http methods used with their following demo client side request
   - GET
@@ -70,22 +70,24 @@ Simply install the `.deb` file, no other setup required.
 
 2. Boost
 ```bash
-root@ubuntu$ sudo snap install libboost-all-dev
+root@ubuntu$ sudo apt install libboost-all-dev
 ```
 
-# Now making the project production ready...let say somewhat ready:)
+# Initial steps to be taken towards making the project production ready
 - Common problems of building projects “natively” on a workstation
 > merko bas seekhna tha yeh part toh ham yeh bhi karre hain lol. Yeh ni pata ki docker/github-action/cmake inme kya cheez kese decide karni hoti
 
-  - First of all, let us discuss why building C/C++ projects directly on a workstation may become a problem. C++ does not provide a built-in dependency management mechanism and as a result, third parties are added using a mix of techniques: installing from Linux distro’s repositories (e.g. apt-get) or via “make install”, adding 3rd parties as git submodules and building them within the source tree, or using a half-baked solution like Conan.
+  - First of all, let us discuss why building C/C++ projects directly on a workstation may become a problem. 
+  
+  C++ does not provide a built-in dependency management mechanism and as a result, third parties are added using a mix of techniques: installing from Linux distro’s repositories (e.g. `apt`) or via `make install`, adding 3rd parties as git sub-modules and building them within the source tree, or using a half-baked solution like Conan.
+
   Unfortunately, all of them have certain disadvantages:
   
-    - Installing dependencies on a dev machine makes the environment dirty and rarely the same as CI/CD or production, especially after updating the 3rd parties.
+  - Installing dependencies on a dev machine makes the environment dirty and rarely the same as CI/CD or production, especially after updating the 3rd parties.
     
-    - Adding 3rd parties as git submodules requires building them within the project’s source tree. In cases when a 3rd party is heavy (boost, Protobuf, Thrift, etc), this approach may slow down the build so significantly that developers become reluctant to clean a build directory or switch between branches.
+  - Adding 3rd parties as git submodules requires building them within the project’s source tree. In cases when a 3rd party is heavy (boost, Protobuf, Thrift, etc), this approach may slow down the build so significantly that developers become reluctant to clean a build directory or switch between branches.
       
-    - Solutions like Conan often lack the right version of a certain dependency and adding it requires writing code in Python, which from my point of view is a bit too much.
-
+  - Solutions like Conan often lack the right version of a certain dependency and adding it requires writing code in Python, which from my point of view is a bit too much.
 
 
 # Paths for Project
