@@ -1,6 +1,6 @@
 #include <iostream>
-#include "../user-defined-header-files/linked_list.h"
-#include "../user-defined-header-files/avl_tree.h"
+#include "../../../include/linked_list.h"
+#include "../../../include/avl_tree.h"
 
 using namespace std;
 #define CAPACITY 100 // Size of the Hash Table
@@ -27,7 +27,7 @@ public:
 
 // Overloaded the stream insertion operator for easily printing `hashTableItem` instance variables
 ostream& operator << (ostream& out, hashTableItem* item) {
-    out << "teacherName: " << item->teacherName << ", Value: " << item->teacherDB;
+    out << "\nTeacher's Name: " << item->teacherName << "\nPointer value of DB: " << item->teacherDB << endl;
     return out;
 }
 
@@ -71,14 +71,15 @@ hashTableItem* hashSearch(hashTable* table, string teacherName) {
     
     int index = hashFunction(teacherName);
 
+    // Item here means the teacher's database
     hashTableItem* currentItem = table->items[index];
 
-    linkedListNode<hashTableItem>* overflowLinkedList = table->overflowLinkedLists[index];
+    linkedListNode<hashTableItem>* overflowLinkedList = table->overflowLinkedLists[index];    
+    
 
-
-    // Ensure that we move to a non NULL item
+    // cout << overflowLinkedList;
+    // Ensure that we are at a non NULL item
     while(currentItem != NULL) {
-
         // return new hashTableItem;  
         // return NULL;
 
@@ -96,7 +97,6 @@ hashTableItem* hashSearch(hashTable* table, string teacherName) {
         else {
             break; // For the condition when the item's teacherName doesn't match, as well as the overflowLinkedList is NULL, so no more elements are left to check. So, we can safely terminate the while loop.
         }
-
     }
     
 
@@ -228,12 +228,12 @@ void printTable(hashTable* table) {
     for (int index = 0; index < table->hashLimit; index++) {
         
         if (table->items[index]) {
-            cout << "Index:" << index << ", " << table->items[index] << endl;
+            cout << "Index: " << index << table->items[index] << endl;
         }
         
         linkedListNode<hashTableItem>* overflowLinkedList = table->overflowLinkedLists[index];
         while (overflowLinkedList) {
-            cout << "Index:" << index << ", " << overflowLinkedList->item << endl;
+            cout << "Index: " << index << overflowLinkedList->item << endl;
 
             overflowLinkedList = overflowLinkedList->next;
         }
@@ -257,20 +257,21 @@ int main() {
     insertDatabaseintoHashTable(tablePointer, "rachna", NULL);
 
     hashTableUpdateDatabaseRecords(tablePointer, "rachna", new Node("rohan", 12, 334.3, 9.7)); // Name followed by nick name
+    
+    printTable(tablePointer);
+
+    //* We use printf for displaying pointers because using cout results in the method trying to access the memory location and display data, which can lead to segmentation fault.
+
+    //? Testing hashSearch
+    printf("%p\n", hashSearch(tablePointer, "rohan"));
+
+    //? Pointer value is displayed since the teacher does have a single record.
+    printf("%p\n", tablePointer->items[hashFunction("rachna")]->teacherDB); 
+
     hashTableDeleteFromDatabase(tablePointer, "rachna", "rohan");
 
+    //? Pointer value is (nil) since the teacher has NO records.
     printf("%p\n", tablePointer->items[hashFunction("rachna")]->teacherDB);
-
-    // printTable(tablePointer);
-
-
-    // // Testing hashSearch
-    // cout << hashSearch(tablePointer, "rohan") << endl;
-
-    // // Testing printSearch
-    // printSearch(tablePointer, "rohan");
-    // printSearch(tablePointer, "soham");
-
 
     return 0;
 }
