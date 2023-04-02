@@ -36,7 +36,7 @@ int main() {
             if( hashSearch(tablePointer, teacherName) ) {
                 return crow::response(200, "Database already exists.\n\n");
             }
-
+        
             insertDatabaseintoHashTable(tablePointer, teacherName, NULL);
 
             return crow::response(200, "Database created.\n\n");
@@ -73,10 +73,9 @@ int main() {
             
             Node* studentNode = searchNode(teacherHashValue->teacherDB, studentName);
 
-            printf("%p", studentNode);
 
             if(!studentNode) {
-                return crow::response(404, "Student record doesn't exist.\n");
+                return crow::response(404, "Student record doesn't exist.\n\n");
             }   
 
             string message = "Teacher Name: " + string(teacherName) + "\nStudent Name: " + string(studentNode->name) + "\nAge: " + to_string(studentNode->age) + "\nWeight: " + to_string(studentNode->weight) + "\nCGPA: " + to_string(studentNode->cgpa) + "\n\n"; 

@@ -1,19 +1,17 @@
 #!/usr/bin/bash
 
-# Currently, we are running this on local host. But, if we purchase or rent a domain name for our IP address, then we can make requests to that domain name, and it would be resolved
+# Currently, we are running this on local host. But, if we purchase or rent a domain name for our IP address, then we can make requests to that domain name, and it would be resolved using a DNS
 
+# Creating the first hash table record
 curl "http://127.0.0.1:3000/api/create_database?teacher_name=rachna"
 
-curl "http://127.0.0.1:3000/api/create_database?teacher_name=rachna"
 
 curl "http://127.0.0.1:3000/api/update_database_record?teacher_name=rachna&student_name=mayhul&age=19&weight=197&cgpa=9.7"
 
 curl "http://127.0.0.1:3000/api/display_student_record?teacher_name=rachna&student_name=mayhul"
 
 curl "http://127.0.0.1:3000/api/update_database_record?teacher_name=rachna&student_name=rohan&age=20&weight=190&cgpa=9.6"
-
 curl "http://127.0.0.1:3000/api/update_database_record?teacher_name=rachna&student_name=prerit&age=17&weight=150&cgpa=9.4"
-
 curl "http://127.0.0.1:3000/api/update_database_record?teacher_name=rachna&student_name=soham&age=21&weight=200&cgpa=9.9"
 
 curl "http://127.0.0.1:3000/api/display_all_records?teacher_name=rachna"
@@ -21,3 +19,14 @@ curl "http://127.0.0.1:3000/api/display_all_records?teacher_name=rachna"
 curl "http://127.0.0.1:3000/api/delete_student_record?teacher_name=rachna&student_name=mayhul" 
 
 curl "http://127.0.0.1:3000/api/display_student_record?teacher_name=rachna&student_name=mayhul"
+
+# Hash Collision below
+curl "http://127.0.0.1:3000/api/create_database?teacher_name=archna"
+
+# Adding student records
+curl "http://127.0.0.1:3000/api/update_database_record?teacher_name=archna&student_name=purerito&age=11&weight=250&cgpa=7.7"
+curl "http://127.0.0.1:3000/api/update_database_record?teacher_name=archna&student_name=somyo&age=14&weight=140&cgpa=9.95"
+curl "http://127.0.0.1:3000/api/update_database_record?teacher_name=archna&student_name=mehul&age=15&weight=192&cgpa=9.4"
+
+# Displaying records of the second teacher
+curl "http://127.0.0.1:3000/api/display_all_records?teacher_name=archna"

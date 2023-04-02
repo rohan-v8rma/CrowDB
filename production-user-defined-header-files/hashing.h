@@ -47,15 +47,7 @@ public:
         this->items = new hashTableItem*[hashLimit];
         // All elements of the items array, which contains pointers, are by-default NULL.
         this->overflowLinkedLists = new linkedListNode<hashTableItem>*[hashLimit];
-    }
-
-    // hashTable(int hashLimit) {
-    //     this->hashLimit = hashLimit;
-    //     this->items = new hashTableItem*[hashLimit];
-    //     // All elements of the items array created above, which contains pointers, are by-default NULL. We need to allocate memory for each of them separately.
-    //     this->overflowLinkedLists = new linkedListNode<hashTableItem>*[hashLimit];
-    // }   
-  
+    }  
 };
 
 // Hashing function
@@ -249,53 +241,3 @@ string hashTableDisplayAllDatabaseRecords(hashTable* table, string teacherName) 
 
     return( "Database does not exist.\n");
 }
-
-
-void printTable(hashTable* table) {
-    cout << "\nHASH TABLE\n\n-------------------" << endl;
-    
-    for (int index = 0; index < table->hashLimit; index++) {
-        
-        if (table->items[index]) {
-            cout << "Index:" << index << ", " << table->items[index] << endl;
-        }
-        
-        linkedListNode<hashTableItem>* overflowLinkedList = table->overflowLinkedLists[index];
-        while (overflowLinkedList) {
-            cout << "Index:" << index << ", " << overflowLinkedList->item << endl;
-
-            overflowLinkedList = overflowLinkedList->next;
-        }
-    }
-    cout << "-------------------\n\n";
-}
-
-// int main() {
-//     // int hashVal = hashFunction("mayhul");
-
-//     // cout << hashVal << endl;
-
-//     // hashVal = hashFunction("soham");
-
-//     // cout << hashVal << endl;
-
-//     hashTable* tablePointer = new hashTable(CAPACITY);
-
-//     //! NOTE: rohan, soham and mayhul each have hash value of 6 for the current hashing function.
-
-//     hashTableInsert(tablePointer, "mayhul", "buri-buri"); // Name followed by nick name
-//     hashTableInsert(tablePointer, "rohan", "batman");
-
-//     printTable(tablePointer);
-
-
-//     // Testing hashSearch
-//     cout << hashSearch(tablePointer, "rohan") << endl;
-
-//     // Testing printSearch
-//     printSearch(tablePointer, "rohan");
-//     printSearch(tablePointer, "soham");
-
-
-//     return 0;
-// }
