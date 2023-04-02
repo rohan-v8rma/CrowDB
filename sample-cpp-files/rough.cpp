@@ -1,19 +1,26 @@
-#include <iostream>
 
-#define CAPACITY 10
+template <class T>
+class linkedListNode {
+public:
+    T* item = NULL; 
+    linkedListNode* next = NULL;
 
-using namespace ::std;
+    linkedListNode(T* item) {
+        this->item = item;
+    }
 
-int hashFunction(string name){
-  int hash = 0;
-  for(int i = 0; i< name.length(); i++){
-    hash += name[i];
-  }
-  return hash % CAPACITY; 
-}
+    void insert(T* item) {
+        if(this->item == NULL) {
+            this->item = item;
+            return;
+        }
 
-int main() {
-  cout << to_string(2223.2) << endl;
+        linkedListNode* tempPtr = this;
+        
+        while(tempPtr->next != NULL) {
+            tempPtr = tempPtr->next;
+        }
 
-  cout << hashFunction("lijo") << endl;
-}
+        tempPtr->next = new linkedListNode(item);
+    }
+};
