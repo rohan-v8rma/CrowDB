@@ -2,8 +2,14 @@
 #include "vector"
 #include "utility"
 #include "string"
-#include "crow_all.h"
-#include <hashing.h>
+
+//? Includes for building
+// #include "crow_all.h"
+// #include <hashing.h>
+
+//? Includes for testing
+#include "../include/crow_all.h"
+#include "../include/hashing.h"
 
 using namespace std;
 
